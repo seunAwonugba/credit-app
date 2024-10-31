@@ -14,12 +14,14 @@ import {
 } from '../constant/constants';
 import { compareHash } from '../utils/hash';
 import { NetworkService } from '../network/network.service';
+import { TokenService } from '../token/token.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private networkService: NetworkService,
+    private tokenService: TokenService,
   ) {}
 
   async signup(user: any) {
@@ -40,7 +42,21 @@ export class AuthService {
       if (message == KARMA_ID_NOT_FOUND) {
         const signup = await this.userService.createUser(user);
         delete signup.password;
-        return signup;
+
+        const authenticationTokenPayload = {
+          id: signup.id,
+          email: signup.email,
+        };
+
+        const authenticationTokens =
+          await this.tokenService.generateAuthenticationTokens(
+            authenticationTokenPayload,
+          );
+
+        return {
+          ...signup,
+          ...authenticationTokens,
+        };
       }
       throw new BadRequestException(message);
     }
@@ -65,6 +81,19 @@ export class AuthService {
     }
     delete user.password;
 
-    return user;
+    const authenticationTokenPayload = {
+      id: user.id,
+      email: user.email,
+    };
+
+    const authenticationTokens =
+      await this.tokenService.generateAuthenticationTokens(
+        authenticationTokenPayload,
+      );
+
+    return {
+      ...user,
+      ...authenticationTokens,
+    };
   }
 }

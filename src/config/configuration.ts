@@ -8,4 +8,10 @@ export default () => ({
   },
   karmaBaseUrl: process.env.KARMA_BASE_URL,
   adjutorApiKey: process.env.ADJUTOR_API_KEY,
+  token: {
+    accessTokenKey: process.env.ACCESS_TOKEN_KEY,
+    refreshTokenKey: process.env.REFRESH_TOKEN_KEY,
+    accessTokenEx: process.env.ACCESS_TOKEN_KEY_EX,
+    refreshTokenEx: process.env.REFRESH_TOKEN_KEY_EX,
+  },
 });

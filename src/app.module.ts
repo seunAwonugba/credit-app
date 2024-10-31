@@ -7,7 +7,10 @@ import { WalletModule } from './wallet/wallet.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { NetworkModule } from './network/network.module';
+import { TokenModule } from './token/token.module';
 import configuration from './config/configuration';
+import { APP_GUARD } from '@nestjs/core';
+import { AccessTokenGuard } from './guard/accessToken.guard';
 
 @Module({
   imports: [
@@ -35,8 +38,15 @@ import configuration from './config/configuration';
       }),
     }),
     NetworkModule,
+    TokenModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AccessTokenGuard,
+    },
+  ],
 })
 export class AppModule {}

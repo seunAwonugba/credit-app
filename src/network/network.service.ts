@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -26,6 +26,9 @@ export class NetworkService {
 
       return checkKarma;
     } catch (error: any) {
+      if (!error.response) {
+        throw new InternalServerErrorException();
+      }
       return error.response;
     }
   }
