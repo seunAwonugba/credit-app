@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { WalletModule } from './wallet/wallet.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { NetworkModule } from './network/network.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -33,6 +34,7 @@ import configuration from './config/configuration';
         // synchronize: true,
       }),
     }),
+    NetworkModule,
   ],
   controllers: [AppController],
   providers: [AppService],
