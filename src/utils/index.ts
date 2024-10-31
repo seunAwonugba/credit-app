@@ -9,5 +9,3 @@ export const matchingPassword = (payload: any) => {
     throw new BadRequestException(PASSWORD_MATCH);
   }
 };
-
-

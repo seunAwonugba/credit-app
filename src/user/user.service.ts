@@ -5,12 +5,14 @@ import { Repository } from 'typeorm';
 import { matchingPassword } from '../utils';
 import { UNIQUE_EMAIL } from '../constant/constants';
 import { hashData } from '../utils/hash';
+import { AccountService } from '../account/account.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private accountService: AccountService,
   ) {}
 
   async createUser(user: any) {
@@ -28,6 +30,11 @@ export class UserService {
     };
 
     const createUser = await this.userRepository.save(userPayload);
+
+    await this.accountService.createAccount({
+      userId: createUser.id,
+    });
+
     return createUser;
   }
 
