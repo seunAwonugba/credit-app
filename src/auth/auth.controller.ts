@@ -1,7 +1,7 @@
 import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
-import { AUTH_PREFIX, SIGN_UP_URL } from '../constant/constants';
+import { AUTH_PREFIX, LOGIN_IN_URL, SIGN_UP_URL } from '../constant/constants';
 import { AuthService } from './auth.service';
-import { SignUpDto } from './dto/sign-up.dto';
+import { LoginDto, SignUpDto } from './dto/auth.dto';
 
 @Controller(AUTH_PREFIX)
 export class AuthController {
@@ -15,6 +15,17 @@ export class AuthController {
       statusCode: HttpStatus.CREATED,
       data: signup,
       message: HttpStatus.CREATED,
+    };
+  }
+
+  @Post(LOGIN_IN_URL)
+  async login(@Body() loginDto: LoginDto) {
+    const login = await this.authService.login(loginDto);
+
+    return {
+      statusCode: HttpStatus.OK,
+      data: login,
+      message: HttpStatus.OK,
     };
   }
 }
