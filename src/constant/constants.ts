@@ -33,3 +33,6 @@ export const BLACKLIST_ACCOUNT = 'Cannot onboard a blacklisted account';
 export const UNEXPECTED_ERROR = 'Unexpected error';
 export const IS_PUBLIC_KEY = 'isPublic';
 export const INSUFFICIENT_ACCOUNT = 'Insufficient account balance';
+export const APP_TITLE = 'Credit App';
+export const APP_DESCRIPTION =
+  'Credit App is a mobile lending app that requires wallet functionality. This is needed as borrowers need a wallet to receive the loans they have been granted and also send the money for repayments.';

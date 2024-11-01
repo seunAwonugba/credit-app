@@ -45,8 +45,9 @@ export class Transaction {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   balanceAfter: number;
 
+  @Column()
   @Generated('uuid')
-  referenceId: number;
+  referenceId: string;
 
   @Column({ type: 'json', nullable: true })
   metadata: JSON;

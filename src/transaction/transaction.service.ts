@@ -132,8 +132,6 @@ export class TransactionService {
       throw new BadRequestException(INSUFFICIENT_ACCOUNT);
     }
 
-    //hash to prevent duplicate
-
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
