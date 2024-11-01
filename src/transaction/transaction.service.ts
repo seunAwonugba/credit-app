@@ -49,6 +49,7 @@ export class TransactionService {
       transactionType: TransactionType.CREDIT,
       status: Status.SUCCESS,
       action: Action.FUND,
+      userId: String(user.id),
       amount,
       balanceBefore,
       balanceAfter,
@@ -93,6 +94,7 @@ export class TransactionService {
       transactionType: TransactionType.DEBIT,
       status: Status.SUCCESS,
       action: Action.WITHDRAW,
+      userId: String(user.id),
       amount,
       balanceBefore,
       balanceAfter,
@@ -167,6 +169,7 @@ export class TransactionService {
         transactionType: TransactionType.DEBIT,
         status: Status.SUCCESS,
         action: Action.TRANSFER,
+        userId: String(user.id),
         amount,
         balanceBefore: userAccountBalanceBeforeTransfer,
         balanceAfter: userAccountBalanceAfterDebit,
@@ -179,6 +182,7 @@ export class TransactionService {
         transactionType: TransactionType.CREDIT,
         status: Status.SUCCESS,
         action: Action.TRANSFER,
+        userId: String(receiver.id),
         amount,
         balanceBefore: receiverAccountBalanceBeforeTransfer,
         balanceAfter: receiverAccountBalanceAfterCredit,
@@ -199,5 +203,15 @@ export class TransactionService {
       // you need to release a queryRunner which was manually instantiated
       await queryRunner.release();
     }
+  }
+
+  async getTransactionsByUserId(userId: string) {
+    const transactions = await this.transactionRepository.find({
+      where: {
+        userId,
+      },
+    });
+
+    return transactions;
   }
 }

@@ -33,6 +33,9 @@ export class Transaction {
   })
   action: Action;
 
+  @Column()
+  userId: string;
+
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   amount: number;
 

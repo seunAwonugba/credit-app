@@ -20,3 +20,8 @@ export class TransferDto {
   @IsNotEmpty({ message: AMOUNT_REQUIRED })
   amount: number;
 }
+
+export class UserDto {
+  @IsNotEmpty({ message: USER_ID_REQUIRED })
+  userId: string;
+}

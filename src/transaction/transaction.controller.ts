@@ -6,7 +6,7 @@ import {
   WITHDRAW_URL,
 } from '../constant/constants';
 import { TransactionService } from './transaction.service';
-import { FundDto, TransferDto } from './dto/transaction.dto';
+import { FundDto, TransferDto, UserDto } from './dto/transaction.dto';
 import { Request } from 'express';
 
 @Controller(TRANSACTION_URL)
@@ -46,6 +46,19 @@ export class TransactionController {
     return {
       statusCode: HttpStatus.OK,
       data: transfer,
+      message: HttpStatus.OK,
+    };
+  }
+
+  @Post()
+  async getTransactions(@Body() userDto: UserDto) {
+    const userId = userDto.userId;
+
+    const transactions =
+      await this.transactionService.getTransactionsByUserId(userId);
+    return {
+      statusCode: HttpStatus.OK,
+      data: transactions,
       message: HttpStatus.OK,
     };
   }
