@@ -4,9 +4,12 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { INVALID_EMAIL } from '../constant/constants';
 import { IsEmail } from 'class-validator';
+import { Account } from '../account/account.entity';
 
 @Entity()
 export class User {
@@ -31,4 +34,8 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToOne(() => Account)
+  @JoinColumn()
+  account: Account;
 }

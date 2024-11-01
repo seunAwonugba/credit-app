@@ -33,7 +33,7 @@ import { TransactionModule } from './transaction/transaction.module';
         migrations: ['dist/**/migrations/*.js'],
         migrationsRun: true,
         autoLoadEntities: true,
-        logging: true,
+        // logging: true,
         // synchronize: true,
       }),
     }),

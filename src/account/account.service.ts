@@ -10,8 +10,41 @@ export class AccountService {
     private accountRepository: Repository<Account>,
   ) {}
 
-  async createAccount(account: any) {
-    const createAccount = await this.accountRepository.save(account);
+  async createAccount() {
+    const createAccount = await this.accountRepository.save({ balance: 0 });
     return createAccount;
+  }
+
+  async getAccount(id: number) {
+    const account = this.accountRepository.findOne({
+      where: {
+        id,
+      },
+    });
+    return account;
+  }
+
+  async creditAccount(payload: any) {
+    const accountId = payload.accountId;
+    const amount = payload.amount;
+
+    const credit = this.accountRepository.increment(
+      { id: accountId },
+      'balance',
+      amount,
+    );
+    return credit;
+  }
+
+  async debitAccount(payload: any) {
+    const accountId = payload.accountId;
+    const amount = payload.amount;
+
+    const debit = this.accountRepository.decrement(
+      { id: accountId },
+      'balance',
+      amount,
+    );
+    return debit;
   }
 }

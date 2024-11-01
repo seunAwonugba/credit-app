@@ -1,5 +1,5 @@
 export enum TransactionType {
-  DEBIT = 'dit',
+  DEBIT = 'debit',
   CREDIT = 'credit',
 }
 export enum Status {

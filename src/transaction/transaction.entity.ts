@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  Generated,
 } from 'typeorm';
 import { Action, Status, TransactionType } from '../enum/enums';
 import { Account } from '../account/account.entity';
@@ -41,10 +42,10 @@ export class Transaction {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   balanceAfter: number;
 
-  @Column({ type: 'uuid' })
+  @Generated('uuid')
   referenceId: number;
 
-  @Column({ type: 'json' })
+  @Column({ type: 'json', nullable: true })
   metadata: JSON;
 
   @CreateDateColumn()

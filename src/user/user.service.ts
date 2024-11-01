@@ -24,16 +24,15 @@ export class UserService {
     matchingPassword(user);
     const password = await hashData(user.password);
     delete user.confirmPassword;
+
+    const account = await this.accountService.createAccount();
+
     const userPayload = {
       ...user,
       password,
+      account,
     };
-
     const createUser = await this.userRepository.save(userPayload);
-
-    await this.accountService.createAccount({
-      userId: createUser.id,
-    });
 
     return createUser;
   }
@@ -44,12 +43,27 @@ export class UserService {
   }
 
   async getUser(id: number): Promise<User | null> {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        account: true,
+      },
+    });
+
     return user;
   }
 
   async getUserByEmail(email: string): Promise<User | null> {
-    const user = await this.userRepository.findOneBy({ email });
+    const user = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+      relations: {
+        account: true,
+      },
+    });
     return user;
   }
 }
