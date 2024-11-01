@@ -12,6 +12,9 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private userService: UserService) {}
 
+  /**
+   * get user by id
+   */
   @Get(':id')
   async getUser(@Param('id') id: string) {
     const user = await this.userService.getUser(Number(id));

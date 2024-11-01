@@ -13,6 +13,9 @@ import { Public } from '../utils/skip-auth';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  /**
+   * A user can create an account
+   */
   @Public()
   @Post(SIGN_UP_URL)
   async signup(@Body() signupDto: SignUpDto) {
@@ -25,6 +28,9 @@ export class AuthController {
     };
   }
 
+  /**
+   * A user can login
+   */
   @Public()
   @Post(LOGIN_URL)
   async login(@Body() loginDto: LoginDto) {
@@ -37,6 +43,9 @@ export class AuthController {
     };
   }
 
+  /**
+   * A user can logout
+   */
   @Public()
   @Get(LOGOUT_URL)
   async logout() {

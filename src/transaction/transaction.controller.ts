@@ -13,6 +13,9 @@ import { Request } from 'express';
 export class TransactionController {
   constructor(private transactionService: TransactionService) {}
 
+  /**
+   * A user can fund their account
+   */
   @Post(FUND_URL)
   async fundAccount(@Body() fundDto: FundDto) {
     const fund = await this.transactionService.fundAccount(fundDto);
@@ -23,6 +26,9 @@ export class TransactionController {
     };
   }
 
+  /**
+   * A user can withdraw funds from their account
+   */
   @Post(WITHDRAW_URL)
   async withdraw(@Body() fundDto: FundDto) {
     const fund = await this.transactionService.withdraw(fundDto);
@@ -33,6 +39,9 @@ export class TransactionController {
     };
   }
 
+  /**
+   * A user can transfer funds to another user’s account
+   */
   @Post(TRANSFER_URL)
   async transfer(@Body() transferDto: TransferDto, @Req() req: Request) {
     const user = req.user;
@@ -50,6 +59,9 @@ export class TransactionController {
     };
   }
 
+  /**
+   * A user can get a record of account transactions
+   */
   @Post()
   async getTransactions(@Body() userDto: UserDto) {
     const userId = userDto.userId;
