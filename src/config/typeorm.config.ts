@@ -11,6 +11,6 @@ export default new DataSource({
   database: process.env.DB_NAME,
   entities: ['dist/**/*.entity.js'],
   migrations: ['dist/**/migrations/*.js'],
-  migrationsRun: true,
+  // migrationsRun: true,
   // logging: true,
 });

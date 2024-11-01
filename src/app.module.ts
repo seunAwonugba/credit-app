@@ -12,6 +12,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './guard/accessToken.guard';
 import { AccountModule } from './account/account.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { KnexModule } from 'nest-knexjs';
 
 @Module({
   imports: [
@@ -31,10 +32,25 @@ import { TransactionModule } from './transaction/transaction.module';
         database: process.env.DB_NAME,
         entities: ['dist/**/*.entity.js'],
         migrations: ['dist/**/migrations/*.js'],
-        migrationsRun: true,
-        autoLoadEntities: true,
+        // migrationsRun: true,
+        // autoLoadEntities: true,
         // logging: true,
         // synchronize: true,
+      }),
+    }),
+    KnexModule.forRootAsync({
+      useFactory: () => ({
+        config: {
+          client: 'mysql2',
+          version: '5.7',
+          connection: {
+            host: process.env.DB_HOST,
+            user: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+            port: parseInt(process.env.DB_PORT) || 3306,
+          },
+        },
       }),
     }),
     NetworkModule,
