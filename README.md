@@ -31,7 +31,7 @@ The project is built with:
 
 - **Node.js** and **Nest.js** for server-side logic
 - **MySQL** for database management
-- **TypeORM** ORM for database operations
+- **Knex.js** SQL query builder for database operations
 - **JWT** for authentication and authorization
 
 ## Setup and Installation
@@ -54,10 +54,10 @@ npm install
 3. **Set up the database:**
 
 - Create a MySQL database.
-- Run TypeORM migrations to set up the database schema.
+- Run Knex migrations to set up the database schema.
 
 ```bash
-npm run migration:run
+npm run migrate
 ```
 
 4. **Environment Variables:** Set up environment variables as listed below.
