@@ -12,9 +12,9 @@ import {
   INCORRECT_CREDENTIALS,
   KARMA_ID_NOT_FOUND,
 } from '../constant/constants';
-import { compareHash } from '../utils/hash';
 import { NetworkService } from '../network/network.service';
 import { TokenService } from '../token/token.service';
+import { compareHash } from '../utils/hash';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +26,7 @@ export class AuthService {
 
   async signup(user: any) {
     const email = user.email;
-    const checkKarma = await this.networkService.CheckKarma(email);
+    const checkKarma = await this.networkService.checkKarma(email);
 
     if (checkKarma.status >= 200 && checkKarma.status < 300) {
       throw new BadRequestException(BLACKLIST_ACCOUNT);
@@ -35,24 +35,20 @@ export class AuthService {
       const data = checkKarma.data;
       const status = data.status;
       const message = data.message;
-
       if (status == ERROR) {
         throw new BadRequestException(message);
       }
       if (message == KARMA_ID_NOT_FOUND) {
         const signup = await this.userService.createUser(user);
         delete signup.password;
-
         const authenticationTokenPayload = {
           id: signup.id,
           email: signup.email,
         };
-
         const authenticationTokens =
           await this.tokenService.generateAuthenticationTokens(
             authenticationTokenPayload,
           );
-
         return {
           ...signup,
           ...authenticationTokens,
@@ -73,24 +69,19 @@ export class AuthService {
       password,
       hash: user.password,
     };
-
     const comparePassword = await compareHash(hashPayload);
-
     if (!comparePassword) {
       throw new UnauthorizedException(INCORRECT_CREDENTIALS);
     }
     delete user.password;
-
     const authenticationTokenPayload = {
       id: user.id,
       email: user.email,
     };
-
     const authenticationTokens =
       await this.tokenService.generateAuthenticationTokens(
         authenticationTokenPayload,
       );
-
     return {
       ...user,
       ...authenticationTokens,

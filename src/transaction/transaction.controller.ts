@@ -8,8 +8,10 @@ import {
 import { TransactionService } from './transaction.service';
 import { FundDto, TransferDto, UserDto } from './dto/transaction.dto';
 import { Request } from 'express';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller(TRANSACTION_URL)
+@ApiBearerAuth('JWT')
 export class TransactionController {
   constructor(private transactionService: TransactionService) {}
 
@@ -19,6 +21,7 @@ export class TransactionController {
   @Post(FUND_URL)
   async fundAccount(@Body() fundDto: FundDto) {
     const fund = await this.transactionService.fundAccount(fundDto);
+
     return {
       statusCode: HttpStatus.OK,
       data: fund,

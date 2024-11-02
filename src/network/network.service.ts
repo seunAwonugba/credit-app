@@ -9,7 +9,7 @@ export class NetworkService {
     private configService: ConfigService,
   ) {}
 
-  async CheckKarma(identity: string) {
+  async checkKarma(identity: string) {
     try {
       const karmaBaseUrl = this.configService.get<string>('karmaBaseUrl');
       const adjutorApiKey = this.configService.get<string>('adjutorApiKey');
@@ -23,7 +23,6 @@ export class NetworkService {
           headers,
         },
       );
-
       return checkKarma;
     } catch (error: any) {
       if (!error.response) {

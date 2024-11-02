@@ -1,4 +1,4 @@
-## Description
+## Overview
 
 The **Credit App** is an MVP backend solution that provides essential wallet functionality for a mobile lending app. This service allows borrowers to manage their loan disbursements and repayments with ease and security.
 
@@ -10,9 +10,10 @@ The **Credit App** is an MVP backend solution that provides essential wallet fun
 - [Setup and Installation](#setup-and-installation)
 - [Environment Variables](#environment-variables)
 - [API Endpoints](#api-endpoints)
-- [Error Handling](#error-handling)
 - [Testing](#testing)
+- [Blacklist Check](#blacklist)
 - [Future Improvements](#future-improvements)
+- [Stay in touch](#connect)
 
 ## Features
 
@@ -36,52 +37,89 @@ The project is built with:
 ## Setup and Installation
 
 1. **Clone the repository:**
-   ```bash
-   git clone <repository-url>
-   ```
-
-## Installation
 
 ```bash
-$ npm install
+git clone https://github.com/seunAwonugba/credit-app.git
+
+cd demo-credit-wallet-service
+
 ```
 
-## Running the app
+2. **Install dependencies:**
+
+```bash
+npm install
+```
+
+3. **Set up the database:**
+
+- Create a MySQL database.
+- Run TypeORM migrations to set up the database schema.
+
+```bash
+npm run migration:run
+```
+
+4. **Environment Variables:** Set up environment variables as listed below.
+
+5. **Start the server:**
 
 ```bash
 # development
-$ npm run start
+npm run start
 
 # watch mode
-$ npm run start:dev
+npm run dev
 
 # production mode
-$ npm run start:prod
+npm run start:prod
 ```
 
-## Test
+## Environment Variables
+
+```bash
+DB_PORT=
+DB_HOST=
+DB_USERNAME=
+DB_PASSWORD=
+DB_NAME=
+SALT=
+KARMA_BASE_URL=
+ADJUTOR_API_KEY=
+ACCESS_TOKEN_KEY=
+REFRESH_TOKEN_KEY=
+ACCESS_TOKEN_KEY_EX=
+REFRESH_TOKEN_KEY_EX=
+```
+
+## API Endpoints
+
+- [Swagger Documentation](http://localhost:3000/api)
+
+## Testing
 
 ```bash
 # unit tests
-$ npm run test
+npm run test
 
 # e2e tests
-$ npm run test:e2e
+npm run test:e2e
 
 # test coverage
-$ npm run test:cov
+npm run test:cov
 ```
 
-## Support
+## Blacklist Check
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+The system checks users against the Lendsqr Adjutor Karma blacklist during onboarding to prevent blacklisted users from creating accounts.
+
+## Future Improvements
+
+- **Automated Notification Service:** Notify users of successful transactions.
+
+- **Integration with Lending APIs:**
+  Allow seamless integration with lending and repayment functions.
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+- Author - [Awonugba Seun](https://github.com/seunAwonugba)

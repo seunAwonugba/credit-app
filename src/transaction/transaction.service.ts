@@ -1,50 +1,63 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Transaction } from './transaction.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
 import { Fund } from '../interfaces/transaction.interface';
 import { UserService } from '../user/user.service';
+import { AccountService } from '../account/account.service';
 import {
   INSUFFICIENT_ACCOUNT,
   RECEIVER_NOT_FOUND,
   USER_NOT_FOUND,
 } from '../constant/constants';
-import { AccountService } from '../account/account.service';
-import { Action, Status, TransactionType } from '../enum/enums';
+import { TransactionType, Status, Action } from '../enum/enums';
+import { Knex } from 'knex';
+import { InjectConnection } from 'nest-knexjs';
 
 @Injectable()
 export class TransactionService {
   constructor(
-    @InjectRepository(Transaction)
-    private transactionRepository: Repository<Transaction>,
     private userService: UserService,
     private accountService: AccountService,
-    private dataSource: DataSource,
+    @InjectConnection() private readonly knex: Knex,
   ) {}
+
+  async createTransaction(payload: any) {
+    const [id] = await this.knex.table('transactions').insert({ ...payload });
+    const transaction = await this.getTransaction(id);
+    return transaction;
+  }
+
+  async getTransaction(id: number) {
+    const transaction = await this.knex
+      .table('transactions')
+      .select('*')
+      .where({
+        id,
+      })
+      .first();
+    return transaction;
+  }
 
   async fundAccount(fund: Fund) {
     const userId = fund.userId;
     const amount = fund.amount;
-
     const user = await this.userService.getUser(userId);
-
     if (!user) {
       throw new BadRequestException(USER_NOT_FOUND);
     }
-    const accountId = user.account.id;
-    const balanceBefore = user.account.balance;
 
+    const accountBeforeCredit =
+      await this.accountService.getAccountByUserId(userId);
+
+    const accountId = accountBeforeCredit.id;
+    const balanceBefore = accountBeforeCredit.balance;
     //increase balance
-
     const creditAccountPayload = {
       accountId,
       amount,
     };
-
     await this.accountService.creditAccount(creditAccountPayload);
+    const accountAfterCredit = await this.accountService.getAccount(accountId);
 
-    const account = await this.accountService.getAccount(accountId);
-    const balanceAfter = account.balance;
+    const balanceAfter = accountAfterCredit.balance;
     const transactionPayload = {
       transactionType: TransactionType.CREDIT,
       status: Status.SUCCESS,
@@ -53,41 +66,36 @@ export class TransactionService {
       amount,
       balanceBefore,
       balanceAfter,
-      metadata: {},
-      account,
     };
 
-    const createTransaction =
-      await this.transactionRepository.save(transactionPayload);
+    const createTransaction = await this.createTransaction(transactionPayload);
     return createTransaction;
   }
 
   async withdraw(fund: Fund) {
     const userId = fund.userId;
     const amount = fund.amount;
-
     const user = await this.userService.getUser(userId);
-
     if (!user) {
       throw new BadRequestException(USER_NOT_FOUND);
     }
-    const accountBalance = user.account.balance;
 
-    if (Number(amount) > Number(accountBalance)) {
+    const accountBeforeWithdrawal =
+      await this.accountService.getAccountByUserId(userId);
+    const accountBalanceBeforeWithdrawal = accountBeforeWithdrawal.balance;
+
+    if (Number(amount) > Number(accountBalanceBeforeWithdrawal)) {
       throw new BadRequestException(INSUFFICIENT_ACCOUNT);
     }
-    const accountId = user.account.id;
-    const balanceBefore = user.account.balance;
+    const accountId = accountBeforeWithdrawal.id;
 
+    const balanceBefore = accountBeforeWithdrawal.balance;
     //debit account
-
     const withdrawPayload = {
       accountId,
       amount,
     };
-
     await this.accountService.debitAccount(withdrawPayload);
-
     const account = await this.accountService.getAccount(accountId);
     const balanceAfter = account.balance;
     const transactionPayload = {
@@ -98,11 +106,8 @@ export class TransactionService {
       amount,
       balanceBefore,
       balanceAfter,
-      metadata: {},
-      account,
     };
-
-    const withdraw = await this.transactionRepository.save(transactionPayload);
+    const withdraw = await this.createTransaction(transactionPayload);
     return withdraw;
   }
 
@@ -110,60 +115,62 @@ export class TransactionService {
     const userId = transfer.user.id;
     const receiverId = transfer.receiverId;
     const amount = transfer.amount;
-
     const user = await this.userService.getUser(userId);
     const receiver = await this.userService.getUser(receiverId);
-
     if (!user) {
       throw new BadRequestException(USER_NOT_FOUND);
     }
-
     if (!receiver) {
       throw new BadRequestException(RECEIVER_NOT_FOUND);
     }
 
-    const receiverAccountBalanceBeforeTransfer = receiver.account.balance;
+    const receiverAccountBeforeTransfer =
+      await this.accountService.getAccountByUserId(receiver.id);
+
+    const receiverAccountBalanceBeforeTransfer =
+      receiverAccountBeforeTransfer.balance;
+
+    const receiverAccountId = receiverAccountBeforeTransfer.id;
+
+    // receiver.account.balance;
     // check user has enough to transfer
-    const userAccountBalanceBeforeTransfer = user.account.balance;
+    const userAccountBeforeTransfer =
+      await this.accountService.getAccountByUserId(user.id);
 
-    const userAccountId = user.account.id;
-
+    const userAccountBalanceBeforeTransfer = userAccountBeforeTransfer.balance;
+    const userAccountId = userAccountBeforeTransfer.id;
     if (Number(userAccountBalanceBeforeTransfer) < Number(amount)) {
       throw new BadRequestException(INSUFFICIENT_ACCOUNT);
     }
 
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
     try {
+      // await this.knex.transaction(async (trx) => {
       //debit user account
       const debitAccountPayload = {
         accountId: userAccountId,
         amount,
       };
       await this.accountService.debitAccount(debitAccountPayload);
-
       //credit receiver account
       const creditAccountPayload = {
-        accountId: receiverId,
+        accountId: receiverAccountId,
         amount,
       };
-      await this.accountService.creditAccount(creditAccountPayload);
 
+      await this.accountService.creditAccount(creditAccountPayload);
       //get user balance after debit
       const userAccountAfterDebit =
         await this.accountService.getAccount(userAccountId);
       const userAccountBalanceAfterDebit = userAccountAfterDebit.balance;
-
       //get receiver balance after credit
+
       const receiverAccountAfterCredit =
-        await this.accountService.getAccount(receiverId);
+        await this.accountService.getAccount(receiverAccountId);
+
       const receiverAccountBalanceAfterCredit =
         receiverAccountAfterCredit.balance;
-
       //user transaction payload
-      const debit = {
+      const debitPayload = {
         transactionType: TransactionType.DEBIT,
         status: Status.SUCCESS,
         action: Action.TRANSFER,
@@ -171,12 +178,10 @@ export class TransactionService {
         amount,
         balanceBefore: userAccountBalanceBeforeTransfer,
         balanceAfter: userAccountBalanceAfterDebit,
-        metadata: {},
-        account: userAccountAfterDebit,
       };
 
       //receiver transaction payload
-      const credit = {
+      const creditPayload = {
         transactionType: TransactionType.CREDIT,
         status: Status.SUCCESS,
         action: Action.TRANSFER,
@@ -184,32 +189,24 @@ export class TransactionService {
         amount,
         balanceBefore: receiverAccountBalanceBeforeTransfer,
         balanceAfter: receiverAccountBalanceAfterCredit,
-        metadata: {},
-        account: receiverAccountAfterCredit,
       };
 
-      const debitTransaction = await this.transactionRepository.save(debit);
-      await this.transactionRepository.save(credit);
+      const debit = await this.createTransaction(debitPayload);
+      await this.createTransaction(creditPayload);
 
-      await queryRunner.commitTransaction();
-
-      return debitTransaction;
-    } catch (err) {
-      // since we have errors lets rollback the changes we made
-      await queryRunner.rollbackTransaction();
-    } finally {
-      // you need to release a queryRunner which was manually instantiated
-      await queryRunner.release();
+      return debit;
+    } catch (err: any) {
+      throw new BadRequestException(err.message);
     }
   }
 
   async getTransactionsByUserId(userId: string) {
-    const transactions = await this.transactionRepository.find({
-      where: {
+    const transaction = await this.knex
+      .table('transactions')
+      .select('*')
+      .where({
         userId,
-      },
-    });
-
-    return transactions;
+      });
+    return transaction;
   }
 }

@@ -1,50 +1,51 @@
 import { Injectable } from '@nestjs/common';
-import { Account } from './account.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Knex } from 'knex';
+import { InjectConnection } from 'nest-knexjs';
 
 @Injectable()
 export class AccountService {
-  constructor(
-    @InjectRepository(Account)
-    private accountRepository: Repository<Account>,
-  ) {}
+  constructor(@InjectConnection() private readonly knex: Knex) {}
 
-  async createAccount() {
-    const createAccount = await this.accountRepository.save({ balance: 0 });
+  async createAccount(userId: number) {
+    const createAccount = await this.knex.table('accounts').insert({ userId });
     return createAccount;
   }
 
   async getAccount(id: number) {
-    const account = this.accountRepository.findOne({
-      where: {
-        id,
-      },
-    });
+    const account = await this.knex
+      .table('accounts')
+      .select('*')
+      .where('id', id)
+      .first();
     return account;
+  }
+
+  async getAccountByUserId(userId: number) {
+    const user = await this.knex
+      .table('accounts')
+      .select('*')
+      .where('userId', userId)
+      .first();
+    return user;
   }
 
   async creditAccount(payload: any) {
     const accountId = payload.accountId;
     const amount = payload.amount;
-
-    const credit = this.accountRepository.increment(
-      { id: accountId },
-      'balance',
-      amount,
-    );
+    const credit = this.knex
+      .table('accounts')
+      .increment('balance', amount)
+      .where({ id: accountId });
     return credit;
   }
 
   async debitAccount(payload: any) {
     const accountId = payload.accountId;
     const amount = payload.amount;
-
-    const debit = this.accountRepository.decrement(
-      { id: accountId },
-      'balance',
-      amount,
-    );
-    return debit;
+    const credit = this.knex
+      .table('accounts')
+      .decrement('balance', amount)
+      .where({ id: accountId });
+    return credit;
   }
 }
