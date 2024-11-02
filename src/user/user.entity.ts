@@ -1,41 +1,41 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  JoinColumn,
-  OneToOne,
-} from 'typeorm';
-import { INVALID_EMAIL } from '../constant/constants';
-import { IsEmail } from 'class-validator';
-import { Account } from '../account/account.entity';
+// import {
+//   Entity,
+//   Column,
+//   PrimaryGeneratedColumn,
+//   CreateDateColumn,
+//   UpdateDateColumn,
+//   JoinColumn,
+//   OneToOne,
+// } from 'typeorm';
+// import { INVALID_EMAIL } from '../constant/constants';
+// import { IsEmail } from 'class-validator';
+// import { Account } from '../account/account.entity';
 
-@Entity()
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+// @Entity()
+// export class User {
+//   @PrimaryGeneratedColumn()
+//   id: number;
 
-  @Column()
-  firstName: string;
+//   @Column()
+//   firstName: string;
 
-  @Column()
-  lastName: string;
+//   @Column()
+//   lastName: string;
 
-  @Column({ unique: true })
-  @IsEmail({}, { message: INVALID_EMAIL })
-  email: string;
+//   @Column({ unique: true })
+//   @IsEmail({}, { message: INVALID_EMAIL })
+//   email: string;
 
-  @Column()
-  password: string;
+//   @Column()
+//   password: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
+//   @CreateDateColumn()
+//   createdAt: Date;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+//   @UpdateDateColumn()
+//   updatedAt: Date;
 
-  @OneToOne(() => Account)
-  @JoinColumn()
-  account: Account;
-}
+//   @OneToOne(() => Account)
+//   @JoinColumn()
+//   account: Account;
+// }

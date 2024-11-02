@@ -1,69 +1,60 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './user.entity';
-import { Repository } from 'typeorm';
-import { matchingPassword } from '../utils';
+
+import { Knex } from 'knex';
+import { InjectConnection } from 'nest-knexjs';
 import { UNIQUE_EMAIL } from '../constant/constants';
+import { matchingPassword } from '../utils';
 import { hashData } from '../utils/hash';
-import { AccountService } from '../account/account.service';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    private accountService: AccountService,
-  ) {}
+  constructor(@InjectConnection() private readonly knex: Knex) {}
 
-  async createUser(user: any) {
-    const email = user.email;
+  async createUser(payload: any) {
+    const email = payload.email;
     const userExist = await this.getUserByEmail(email);
+
     if (userExist) {
       throw new ConflictException(UNIQUE_EMAIL);
     }
-    matchingPassword(user);
-    const password = await hashData(user.password);
-    delete user.confirmPassword;
-
-    const account = await this.accountService.createAccount();
-
+    matchingPassword(payload);
+    const password = await hashData(payload.password);
+    delete payload.confirmPassword;
     const userPayload = {
-      ...user,
+      ...payload,
       password,
-      account,
     };
-    const createUser = await this.userRepository.save(userPayload);
+    const [id] = await this.knex.table('users').insert({ ...userPayload });
+    const user = await this.getUser(id);
+    const userId = user.id;
 
-    return createUser;
-  }
-
-  async getUsers(): Promise<User[]> {
-    const users = await this.userRepository.find();
-    return users;
-  }
-
-  async getUser(id: number): Promise<User | null> {
-    const user = await this.userRepository.findOne({
-      where: {
-        id,
-      },
-      relations: {
-        account: true,
-      },
-    });
+    await this.knex.table('accounts').insert({ userId, balance: 0 });
 
     return user;
   }
 
-  async getUserByEmail(email: string): Promise<User | null> {
-    const user = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-      relations: {
-        account: true,
-      },
-    });
+  async getUsers() {
+    // const users = await this.userRepository.find();
+    // return users;
+  }
+
+  async getUser(id: number) {
+    const user = await this.knex
+      .table('users')
+      .select('*')
+      .where({
+        id,
+      })
+      .first();
+    return user;
+  }
+
+  async getUserByEmail(email: string) {
+    const user = await this.knex
+      .table('users')
+      .select('*')
+      .where('email', email)
+      .first();
     return user;
   }
 }

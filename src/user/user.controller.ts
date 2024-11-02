@@ -7,7 +7,8 @@ import {
 } from '@nestjs/common';
 import { USER_NOT_FOUND, USER_PREFIX } from '../constant/constants';
 import { UserService } from './user.service';
-
+import { ApiBearerAuth } from '@nestjs/swagger';
+@ApiBearerAuth('JWT')
 @Controller(USER_PREFIX)
 export class UserController {
   constructor(private userService: UserService) {}
@@ -22,7 +23,6 @@ export class UserController {
       throw new BadRequestException(USER_NOT_FOUND);
     }
     delete user.password;
-
     return {
       statusCode: HttpStatus.OK,
       data: user,
