@@ -99,7 +99,7 @@ REFRESH_TOKEN_KEY_EX=
 
 ## API Endpoints
 
-- [Swagger Documentation](http://localhost:3000/api)
+- [Swagger Documentation](https://awonugba-seun-lendsqr-be-test.up.railway.app/api)
 
 ## Testing
 
