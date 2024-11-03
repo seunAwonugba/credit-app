@@ -43,6 +43,6 @@ async function bootstrap() {
       tagsSorter: 'alpha', // Sorting tags alphabetically, optional
     },
   });
-  await app.listen(3000);
+  await app.listen(Number(process.env.HOST));
 }
 bootstrap();
