@@ -26,7 +26,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addServer('http://localhost:3000', 'Local environment')
     .addServer(
-      'https://awonugba-seun-lendsqr-be-test.up.railway.app/',
+      'https://awonugba-seun-lendsqr-be-test.up.railway.app',
       'Production environment',
     )
     .addBearerAuth(

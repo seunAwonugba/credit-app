@@ -20,21 +20,6 @@ import { TransactionModule } from './transaction/transaction.module';
       isGlobal: true,
       load: [configuration],
     }),
-    // KnexModule.forRootAsync({
-    //   useFactory: () => ({
-    //     config: {
-    //       client: 'mysql2',
-    //       version: '5.7',
-    //       connection: {
-    //         host: process.env.DB_HOST,
-    //         user: process.env.DB_USERNAME,
-    //         password: process.env.DB_PASSWORD,
-    //         database: process.env.DB_NAME,
-    //         port: parseInt(process.env.DB_PORT) || 3306,
-    //       },
-    //     },
-    //   }),
-    // }),
     NetworkModule,
     TokenModule,
     AccountModule,
