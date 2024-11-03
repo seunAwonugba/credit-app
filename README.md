@@ -7,6 +7,7 @@ The **Credit App** is an MVP backend solution that provides essential wallet fun
 - [Overview](#overview)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
+- [Model](#model)
 - [Setup and Installation](#setup-and-installation)
 - [Environment Variables](#environment-variables)
 - [API Endpoints](#api-endpoints)
@@ -33,6 +34,10 @@ The project is built with:
 - **MySQL** for database management
 - **Knex.js** SQL query builder for database operations
 - **JWT** for authentication and authorization
+
+## Model
+
+- [ER Diagram](https://dbdesigner.page.link/y6KyLSTs1TNt42nC9)
 
 ## Setup and Installation
 
