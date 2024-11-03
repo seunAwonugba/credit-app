@@ -1,4 +1,5 @@
 import { Body, Controller, Get, HttpStatus, Post } from '@nestjs/common';
+import { ReasonPhrases } from 'http-status-codes';
 import {
   AUTH_PREFIX,
   LOGIN_URL,
@@ -24,7 +25,7 @@ export class AuthController {
     return {
       statusCode: HttpStatus.CREATED,
       data: signup,
-      message: HttpStatus.CREATED,
+      message: ReasonPhrases.CREATED,
     };
   }
 
@@ -39,7 +40,7 @@ export class AuthController {
     return {
       statusCode: HttpStatus.OK,
       data: login,
-      message: HttpStatus.OK,
+      message: ReasonPhrases.OK,
     };
   }
 

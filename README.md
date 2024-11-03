@@ -105,10 +105,8 @@ REFRESH_TOKEN_KEY_EX=
 
 ```bash
 # unit tests
-npm run test
-
-# e2e tests
-npm run test:e2e
+npm run test transaction.service.spec.ts
+npm run test auth.controller.spec.ts
 
 # test coverage
 npm run test:cov

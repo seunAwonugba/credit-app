@@ -9,6 +9,7 @@ import { TransactionService } from './transaction.service';
 import { FundDto, TransferDto, UserDto } from './dto/transaction.dto';
 import { Request } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { ReasonPhrases } from 'http-status-codes';
 
 @Controller(TRANSACTION_URL)
 @ApiBearerAuth('JWT')
@@ -23,9 +24,9 @@ export class TransactionController {
     const fund = await this.transactionService.fundAccount(fundDto);
 
     return {
-      statusCode: HttpStatus.OK,
+      statusCode: HttpStatus.CREATED,
       data: fund,
-      message: HttpStatus.OK,
+      message: ReasonPhrases.CREATED,
     };
   }
 
@@ -36,9 +37,9 @@ export class TransactionController {
   async withdraw(@Body() fundDto: FundDto) {
     const fund = await this.transactionService.withdraw(fundDto);
     return {
-      statusCode: HttpStatus.OK,
+      statusCode: HttpStatus.CREATED,
       data: fund,
-      message: HttpStatus.OK,
+      message: ReasonPhrases.CREATED,
     };
   }
 
@@ -56,9 +57,9 @@ export class TransactionController {
 
     const transfer = await this.transactionService.transfer(transferPayload);
     return {
-      statusCode: HttpStatus.OK,
+      statusCode: HttpStatus.CREATED,
       data: transfer,
-      message: HttpStatus.OK,
+      message: ReasonPhrases.CREATED,
     };
   }
 
@@ -74,7 +75,7 @@ export class TransactionController {
     return {
       statusCode: HttpStatus.OK,
       data: transactions,
-      message: HttpStatus.OK,
+      message: ReasonPhrases.OK,
     };
   }
 }
