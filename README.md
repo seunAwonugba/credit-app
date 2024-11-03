@@ -107,9 +107,6 @@ REFRESH_TOKEN_KEY_EX=
 # unit tests
 npm run test transaction.service.spec.ts
 npm run test auth.controller.spec.ts
-
-# test coverage
-npm run test:cov
 ```
 
 ## Blacklist Check
