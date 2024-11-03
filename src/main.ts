@@ -25,7 +25,7 @@ async function bootstrap() {
     .setDescription(APP_DESCRIPTION)
     .setVersion('1.0')
     .addServer('http://localhost:3000', 'Local environment')
-    // .addServer('https://54.204.126.121', 'Production environment')
+    .addServer('https://54.204.188.237', 'Production environment')
     .addBearerAuth(
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
       'JWT',
