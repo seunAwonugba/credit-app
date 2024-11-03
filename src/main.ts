@@ -25,7 +25,7 @@ async function bootstrap() {
     .setDescription(APP_DESCRIPTION)
     .setVersion('1.0')
     .addServer('http://localhost:3000', 'Local environment')
-    .addServer('https://54.204.126.121', 'Production environment')
+    // .addServer('https://54.204.126.121', 'Production environment')
     .addBearerAuth(
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
       'JWT',
@@ -45,6 +45,6 @@ async function bootstrap() {
     },
   });
   app.enableCors();
-  await app.listen(3000);
+  await app.listen(Number(process.env.PORT), process.env.HOST);
 }
 bootstrap();
